@@ -148,6 +148,29 @@ phpstorm-index-blocker/
     └── IndexBlockerExcludePolicyTest.kt
 ```
 
+## Future work (v2 candidates)
+
+### Composer / `.idea` normalizer
+
+Diagnosed during v1 brainstorming on real projects under `~/qoliber-projects/`:
+on Magento projects the heaviest churn under `.idea/` comes from **PhpStorm's
+Composer auto-detection**, not from indexing per se. On
+`magento-fastsearch-final` we observed **693 `<path>` entries** in
+`.idea/php.xml` under `<include_path>` and **693 `<excludeFolder>` entries**
+in the module `.iml`, both generated per-package under `vendor/`. Every
+`rm -rf vendor && composer install` rewrites these and produces noisy VCS
+diffs; in some scenarios entries accumulate rather than being replaced.
+
+A v2 module could intercept or canonicalize these writes via:
+
+- a `ModuleRootListener` / `WorkspaceModelChangeListener` that reverts
+  unwanted vendor-derived entries before persistence, or
+- a `SettingsSavingComponent` that rewrites `php.xml` and `*.iml` to a
+  deduped, sorted, optionally pruned form on save.
+
+Out of scope for v1. To be brainstormed separately once v1 ships and the
+plugin scaffolding is validated.
+
 ## Open questions
 
 None at this stage. All decisions captured above.
