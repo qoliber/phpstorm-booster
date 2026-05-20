@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>com.qoliber.phpstorm.indexblocker</id>
+    <name>Index Blocker</name>
+    <vendor email="jwinkler@qoliber.com" url="https://qoliber.com">Qoliber</vendor>
+
+    <description><![CDATA[
+        Globally exclude folders from indexing across all projects.<br/>
+        Configure under <b>Settings &rarr; Tools &rarr; Index Blocker</b>.
+        Supports exact folder names (<code>var</code>), prefix wildcards
+        (<code>Test*</code>), and relative paths (<code>pub/static</code>).
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+            groupId="tools"
+            id="com.qoliber.phpstorm.indexblocker.settings"
+            displayName="Index Blocker"
+            instance="com.qoliber.phpstorm.indexblocker.IndexBlockerConfigurable"/>
+
+        <projectService
+            serviceImplementation="com.qoliber.phpstorm.indexblocker.IndexBlockerRefresher"/>
+
+        <directoryIndexExcludePolicy
+            implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerExcludePolicy"/>
+    </extensions>
+</idea-plugin>
