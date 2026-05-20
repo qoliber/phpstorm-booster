@@ -20,13 +20,22 @@ dependencies {
     intellijPlatform {
         phpstorm(providers.gradleProperty("platformVersion").get())
         testFramework(TestFrameworkType.Platform)
+        instrumentationTools()
     }
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.opentest4j:opentest4j:1.3.0")
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 intellijPlatform {
