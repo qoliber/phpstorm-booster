@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.qoliber.phpstorm.indexblocker</id>
+    <id>com.qoliber.indexblocker</id>
     <name>Index Blocker</name>
     <vendor email="jwinkler@qoliber.com" url="https://qoliber.com">Qoliber</vendor>
 

@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -21,6 +22,7 @@ dependencies {
         phpstorm(providers.gradleProperty("platformVersion").get())
         testFramework(TestFrameworkType.Platform)
         instrumentationTools()
+        pluginVerifier()
     }
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.opentest4j:opentest4j:1.3.0")
@@ -43,6 +45,12 @@ intellijPlatform {
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = providers.gradleProperty("pluginUntilBuild")
+        }
+    }
+
+    pluginVerification {
+        ides {
+            ide(IntelliJPlatformType.PhpStorm, providers.gradleProperty("platformVersion").get())
         }
     }
 }
