@@ -24,5 +24,8 @@
 
         <directoryIndexExcludePolicy
             implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerExcludePolicy"/>
+
+        <vfs.asyncListener
+            implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerVfsListener"/>
     </extensions>
 </idea-plugin>
