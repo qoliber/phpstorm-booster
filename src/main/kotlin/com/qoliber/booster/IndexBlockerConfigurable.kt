@@ -8,6 +8,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
+import javax.swing.BoxLayout
 import javax.swing.DefaultListModel
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -17,6 +18,8 @@ class IndexBlockerConfigurable : Configurable {
     private val listModel = DefaultListModel<String>()
     private val entriesList = JBList(listModel)
     private val enabledCheckbox = JBCheckBox("Enable Index Blocker")
+    private val magentoCheckbox =
+        JBCheckBox("Auto-exclude Magento build directories in detected Magento projects")
     private var rootPanel: JPanel? = null
 
     override fun getDisplayName(): String = "Index Blocker"
@@ -37,7 +40,12 @@ class IndexBlockerConfigurable : Configurable {
 
         val panel = JPanel(BorderLayout()).apply {
             border = JBUI.Borders.empty(10)
-            add(enabledCheckbox, BorderLayout.NORTH)
+            val topPanel = JPanel().apply {
+                layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                add(enabledCheckbox)
+                add(magentoCheckbox)
+            }
+            add(topPanel, BorderLayout.NORTH)
             add(decorated, BorderLayout.CENTER)
             add(help, BorderLayout.SOUTH)
         }
@@ -49,12 +57,14 @@ class IndexBlockerConfigurable : Configurable {
     override fun isModified(): Boolean {
         val s = IndexBlockerSettings.getInstance()
         if (enabledCheckbox.isSelected != s.enabled) return true
+        if (magentoCheckbox.isSelected != s.magentoFallbackEnabled) return true
         return currentEntries() != s.blockedEntries
     }
 
     override fun apply() {
         val s = IndexBlockerSettings.getInstance()
         s.enabled = enabledCheckbox.isSelected
+        s.magentoFallbackEnabled = magentoCheckbox.isSelected
         s.blockedEntries = currentEntries()
         IndexBlockerRefresher.refreshAllOpenProjects()
     }
@@ -62,6 +72,7 @@ class IndexBlockerConfigurable : Configurable {
     override fun reset() {
         val s = IndexBlockerSettings.getInstance()
         enabledCheckbox.isSelected = s.enabled
+        magentoCheckbox.isSelected = s.magentoFallbackEnabled
         listModel.clear()
         for (e in s.blockedEntries) listModel.addElement(e)
     }
