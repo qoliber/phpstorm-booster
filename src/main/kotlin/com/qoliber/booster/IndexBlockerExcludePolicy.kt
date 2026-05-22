@@ -13,13 +13,28 @@ class IndexBlockerExcludePolicy(private val project: Project) : DirectoryIndexEx
         val settings = IndexBlockerSettings.getInstance()
         if (!settings.enabled) return emptyArray()
 
-        val patterns = settings.blockedEntries.mapNotNull(PatternMatcher::parse)
-        if (patterns.isEmpty()) return emptyArray()
+        // LinkedHashSet gives stable order plus automatic dedup by URL
+        // (so a preset dir already matched by a manual pattern appears once).
+        val urls = LinkedHashSet<String>()
+        val contentRoots = ProjectRootManager.getInstance(project).contentRoots
 
-        val urls = mutableListOf<String>()
-        for (contentRoot in ProjectRootManager.getInstance(project).contentRoots) {
-            collectMatches(contentRoot, "", patterns, urls)
+        val patterns = settings.blockedEntries.mapNotNull(PatternMatcher::parse)
+        if (patterns.isNotEmpty()) {
+            for (contentRoot in contentRoots) {
+                collectMatches(contentRoot, "", patterns, urls)
+            }
         }
+
+        if (settings.magentoFallbackEnabled) {
+            for (contentRoot in contentRoots) {
+                val magentoRoot = MagentoProjectDetector.magentoRootFor(contentRoot) ?: continue
+                for (rel in MagentoPreset.dirs) {
+                    val dir = magentoRoot.findFileByRelativePath(rel) ?: continue
+                    if (dir.isDirectory) urls.add(dir.url)
+                }
+            }
+        }
+
         return urls.toTypedArray()
     }
 
@@ -30,7 +45,7 @@ class IndexBlockerExcludePolicy(private val project: Project) : DirectoryIndexEx
         dir: VirtualFile,
         relativePath: String,
         patterns: List<PatternMatcher.Pattern>,
-        out: MutableList<String>,
+        out: MutableCollection<String>,
     ) {
         if (!dir.isDirectory) return
         for (child in dir.children) {

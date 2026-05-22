@@ -13,9 +13,58 @@ class IndexBlockerExcludePolicyTest : BasePlatformTestCase() {
         try {
             IndexBlockerSettings.getInstance().enabled = true
             IndexBlockerSettings.getInstance().blockedEntries = listOf()
+            IndexBlockerSettings.getInstance().magentoFallbackEnabled = true
         } finally {
             super.tearDown()
         }
+    }
+
+    private fun makeMagentoRoot() {
+        myFixture.addFileToProject("bin/magento", "x")
+        myFixture.addFileToProject("app/etc/env.php", "<?php")
+    }
+
+    fun `test magento fallback excludes preset dirs`() {
+        makeMagentoRoot()
+        makeDirs("generated", "var", "pub/static", "pub/media", "setup", "node_modules", "app/code/Vendor/Module")
+        IndexBlockerSettings.getInstance().blockedEntries = listOf()
+        IndexBlockerSettings.getInstance().magentoFallbackEnabled = true
+
+        val urls = policy().excludeUrlsForProject.toList()
+
+        assertTrue("generated, got $urls", urls.any { it.endsWith("/generated") })
+        assertTrue("pub/media, got $urls", urls.any { it.endsWith("/pub/media") })
+        assertTrue("setup, got $urls", urls.any { it.endsWith("/setup") })
+        assertFalse("must not exclude app/code", urls.any { it.endsWith("/app/code/Vendor/Module") })
+    }
+
+    fun `test magento fallback dedups with manual list`() {
+        makeMagentoRoot()
+        makeDirs("generated", "var")
+        IndexBlockerSettings.getInstance().blockedEntries = listOf("var")
+        IndexBlockerSettings.getInstance().magentoFallbackEnabled = true
+
+        val urls = policy().excludeUrlsForProject.toList()
+
+        assertEquals("var excluded exactly once", 1, urls.count { it.endsWith("/var") })
+        assertTrue(urls.any { it.endsWith("/generated") })
+    }
+
+    fun `test magento fallback off adds nothing`() {
+        makeMagentoRoot()
+        makeDirs("generated", "var")
+        IndexBlockerSettings.getInstance().blockedEntries = listOf()
+        IndexBlockerSettings.getInstance().magentoFallbackEnabled = false
+
+        assertEquals(0, policy().excludeUrlsForProject.size)
+    }
+
+    fun `test non-magento project gets no preset`() {
+        makeDirs("generated", "var")
+        IndexBlockerSettings.getInstance().blockedEntries = listOf()
+        IndexBlockerSettings.getInstance().magentoFallbackEnabled = true
+
+        assertEquals(0, policy().excludeUrlsForProject.size)
     }
 
     private fun policy(): IndexBlockerExcludePolicy = IndexBlockerExcludePolicy(project)
