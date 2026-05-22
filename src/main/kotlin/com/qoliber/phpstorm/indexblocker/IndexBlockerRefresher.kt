@@ -2,9 +2,10 @@ package com.qoliber.phpstorm.indexblocker
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.AsyncFileListener
@@ -20,7 +21,7 @@ class IndexBlockerRefresher(private val project: Project) {
             if (project.isDisposed) return@invokeLater
             ApplicationManager.getApplication().runWriteAction {
                 ProjectRootManagerEx.getInstanceEx(project)
-                    .makeRootsChange(EmptyRunnable.INSTANCE, false, true)
+                    .makeRootsChange(EmptyRunnable.INSTANCE, RootsChangeRescanningInfo.TOTAL_RESCAN)
             }
         }
     }
@@ -37,6 +38,8 @@ class IndexBlockerRefresher(private val project: Project) {
 
 internal class IndexBlockerVfsListener : AsyncFileListener {
 
+    private val log = Logger.getInstance(IndexBlockerVfsListener::class.java)
+
     override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
         val settings = IndexBlockerSettings.getInstance()
         if (!settings.enabled) return null
@@ -51,7 +54,7 @@ internal class IndexBlockerVfsListener : AsyncFileListener {
                 try {
                     IndexBlockerRefresher.refreshAllOpenProjects()
                 } catch (t: Throwable) {
-                    thisLogger().warn("Failed to refresh after VFS change", t)
+                    log.warn("Failed to refresh after VFS change", t)
                 }
             }
         }
