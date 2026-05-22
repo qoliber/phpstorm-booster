@@ -1,1 +1,1 @@
-rootProject.name = "phpstorm-index-blocker"
+rootProject.name = "phpstorm-booster"

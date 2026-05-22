@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.qoliber.indexblocker</id>
-    <name>Index Blocker</name>
+    <name>PhpStorm Booster</name>
     <vendor email="jwinkler@qoliber.com" url="https://qoliber.com">Qoliber</vendor>
 
     <description><![CDATA[
