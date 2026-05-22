@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel

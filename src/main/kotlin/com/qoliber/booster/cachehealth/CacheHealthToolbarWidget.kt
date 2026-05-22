@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -39,8 +39,8 @@ class CacheHealthToolbarWidget : DumbAwareAction(), CustomComponentAction {
 
     private fun showPopup(anchor: JComponent) {
         val group = DefaultActionGroup()
-        ActionManager.getInstance().getAction("com.qoliber.indexblocker.cachehealth.Trim")?.let { group.add(it) }
-        ActionManager.getInstance().getAction("com.qoliber.indexblocker.cachehealth.Invalidate")?.let { group.add(it) }
+        ActionManager.getInstance().getAction("com.qoliber.booster.cachehealth.Trim")?.let { group.add(it) }
+        ActionManager.getInstance().getAction("com.qoliber.booster.cachehealth.Invalidate")?.let { group.add(it) }
         JBPopupFactory.getInstance()
             .createActionGroupPopup(
                 "Cache Health", group, DataContext.EMPTY_CONTEXT,

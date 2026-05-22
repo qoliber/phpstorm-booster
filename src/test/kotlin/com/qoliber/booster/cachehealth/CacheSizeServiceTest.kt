@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 import org.junit.Assert.assertEquals
 import org.junit.Rule

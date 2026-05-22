@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.registry.Registry

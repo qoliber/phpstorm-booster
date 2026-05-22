@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker
+package com.qoliber.booster
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 

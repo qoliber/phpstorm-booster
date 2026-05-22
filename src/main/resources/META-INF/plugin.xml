@@ -1,6 +1,6 @@
 <idea-plugin>
-    <id>com.qoliber.indexblocker</id>
-    <name>PhpStorm Booster</name>
+    <id>com.qoliber.booster</id>
+    <name>Qoliber PhpStorm Booster</name>
     <vendor email="jwinkler@qoliber.com" url="https://qoliber.com">Qoliber</vendor>
 
     <description><![CDATA[
@@ -15,45 +15,45 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable
             groupId="tools"
-            id="com.qoliber.phpstorm.indexblocker.settings"
+            id="com.qoliber.booster.indexblocker.settings"
             displayName="Index Blocker"
-            instance="com.qoliber.phpstorm.indexblocker.IndexBlockerConfigurable"/>
+            instance="com.qoliber.booster.IndexBlockerConfigurable"/>
 
         <projectService
-            serviceImplementation="com.qoliber.phpstorm.indexblocker.IndexBlockerRefresher"/>
+            serviceImplementation="com.qoliber.booster.IndexBlockerRefresher"/>
 
         <directoryIndexExcludePolicy
-            implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerExcludePolicy"/>
+            implementation="com.qoliber.booster.IndexBlockerExcludePolicy"/>
 
         <vfs.asyncListener
-            implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerVfsListener"/>
+            implementation="com.qoliber.booster.IndexBlockerVfsListener"/>
 
         <applicationConfigurable
             groupId="tools"
-            id="com.qoliber.indexblocker.cachehealth.settings"
+            id="com.qoliber.booster.cachehealth.settings"
             displayName="Cache Health"
-            instance="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthConfigurable"/>
+            instance="com.qoliber.booster.cachehealth.CacheHealthConfigurable"/>
 
         <notificationGroup id="Cache Health" displayType="BALLOON"/>
     </extensions>
 
     <applicationListeners>
         <listener
-            class="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthStartup"
+            class="com.qoliber.booster.cachehealth.CacheHealthStartup"
             topic="com.intellij.ide.AppLifecycleListener"/>
     </applicationListeners>
 
     <actions>
-        <action id="com.qoliber.indexblocker.cachehealth.Trim"
-                class="com.qoliber.phpstorm.indexblocker.cachehealth.TrimCachesAction"
+        <action id="com.qoliber.booster.cachehealth.Trim"
+                class="com.qoliber.booster.cachehealth.TrimCachesAction"
                 text="Trim Caches"
                 description="Delete safe-to-clear PhpStorm caches"/>
-        <action id="com.qoliber.indexblocker.cachehealth.Invalidate"
-                class="com.qoliber.phpstorm.indexblocker.cachehealth.InvalidateAndRestartAction"
+        <action id="com.qoliber.booster.cachehealth.Invalidate"
+                class="com.qoliber.booster.cachehealth.InvalidateAndRestartAction"
                 text="Invalidate Caches and Restart"
                 description="Invalidate caches and restart the IDE"/>
-        <action id="com.qoliber.indexblocker.cachehealth.Widget"
-                class="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthToolbarWidget"
+        <action id="com.qoliber.booster.cachehealth.Widget"
+                class="com.qoliber.booster.cachehealth.CacheHealthToolbarWidget"
                 text="Cache Health">
             <add-to-group group-id="MainToolbarRight" anchor="first"/>
         </action>

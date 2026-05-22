@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -33,8 +33,8 @@ object CacheSizeMonitor {
             "Index storage is ${SizeFormat.humanReadable(indexBytes)}. Consider trimming or invalidating caches.",
             NotificationType.WARNING,
         )
-        ActionManager.getInstance().getAction("com.qoliber.indexblocker.cachehealth.Trim")?.let { n.addAction(it) }
-        ActionManager.getInstance().getAction("com.qoliber.indexblocker.cachehealth.Invalidate")?.let { n.addAction(it) }
+        ActionManager.getInstance().getAction("com.qoliber.booster.cachehealth.Trim")?.let { n.addAction(it) }
+        ActionManager.getInstance().getAction("com.qoliber.booster.cachehealth.Invalidate")?.let { n.addAction(it) }
         n.notify(null)
     }
 }

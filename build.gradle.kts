@@ -50,6 +50,7 @@ intellijPlatform {
     }
 
     pluginVerification {
+        freeArgs = listOf("-mute", "TemplateWordInPluginName")
         ides {
             ide(IntelliJPlatformType.PhpStorm, providers.gradleProperty("platformVersion").get())
         }

@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker
+package com.qoliber.booster
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service

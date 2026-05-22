@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker
+package com.qoliber.booster
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

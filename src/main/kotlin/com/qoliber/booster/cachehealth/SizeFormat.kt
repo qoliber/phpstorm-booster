@@ -1,4 +1,4 @@
-package com.qoliber.phpstorm.indexblocker.cachehealth
+package com.qoliber.booster.cachehealth
 
 object SizeFormat {
     private val units = arrayOf("B", "KB", "MB", "GB", "TB")
