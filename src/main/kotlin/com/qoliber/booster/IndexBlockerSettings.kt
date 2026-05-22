@@ -21,6 +21,7 @@ class IndexBlockerSettings : PersistentStateComponent<IndexBlockerSettings.State
             "pub/static",
             "Test*"
         )
+        @JvmField var magentoFallbackEnabled: Boolean = true
     }
 
     private var state = State()
@@ -38,6 +39,10 @@ class IndexBlockerSettings : PersistentStateComponent<IndexBlockerSettings.State
     var blockedEntries: List<String>
         get() = state.blockedEntries.toList()
         set(value) { state.blockedEntries = value.toMutableList() }
+
+    var magentoFallbackEnabled: Boolean
+        get() = state.magentoFallbackEnabled
+        set(value) { state.magentoFallbackEnabled = value }
 
     companion object {
         @JvmStatic
