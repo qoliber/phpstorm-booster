@@ -27,5 +27,35 @@
 
         <vfs.asyncListener
             implementation="com.qoliber.phpstorm.indexblocker.IndexBlockerVfsListener"/>
+
+        <applicationConfigurable
+            groupId="tools"
+            id="com.qoliber.indexblocker.cachehealth.settings"
+            displayName="Cache Health"
+            instance="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthConfigurable"/>
+
+        <notificationGroup id="Cache Health" displayType="BALLOON"/>
     </extensions>
+
+    <applicationListeners>
+        <listener
+            class="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthStartup"
+            topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
+
+    <actions>
+        <action id="com.qoliber.indexblocker.cachehealth.Trim"
+                class="com.qoliber.phpstorm.indexblocker.cachehealth.TrimCachesAction"
+                text="Trim Caches"
+                description="Delete safe-to-clear PhpStorm caches"/>
+        <action id="com.qoliber.indexblocker.cachehealth.Invalidate"
+                class="com.qoliber.phpstorm.indexblocker.cachehealth.InvalidateAndRestartAction"
+                text="Invalidate Caches and Restart"
+                description="Invalidate caches and restart the IDE"/>
+        <action id="com.qoliber.indexblocker.cachehealth.Widget"
+                class="com.qoliber.phpstorm.indexblocker.cachehealth.CacheHealthToolbarWidget"
+                text="Cache Health">
+            <add-to-group group-id="MainToolbarRight" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
