@@ -4,7 +4,7 @@ A PhpStorm/IntelliJ plugin with tools for **better local development practices**
 
 > **Status: `0.1.0` — concept release.** Built to validate the idea on real projects. Expect rough edges; see [Caveats](#caveats).
 
-Compatible with **PhpStorm 2025.3** (build `253.*`).
+Compatible with **PhpStorm 2026.1.x** (build `261.*`).
 
 ---
 
@@ -55,7 +55,7 @@ Visibility into and control over PhpStorm's cache/index storage.
 3. Restart if prompted.
 
 ### Build from source
-Requires a JDK/JBR 21.
+Requires a JDK/JBR 21+.
 ```bash
 ./gradlew buildPlugin
 # → build/distributions/phpstorm-booster-<version>.zip
@@ -81,7 +81,7 @@ This is a `0.1.0` concept; known limitations:
 
 - **Disabling downloadable Shared Indexes may not shrink the cache** and can make local indexing do *more* work. It's included because it's a deliberate user preference, not because it reduces `index/` size. You can turn it off in Cache Health settings.
 - **Cache Health Quick Trim** clears logs/JCEF/AI caches, not the main `index/` storage. To reclaim `index/` itself, use **Invalidate Caches & Restart** (rebuilds a compacted index for active projects only).
-- Built against the PhpStorm 2023.3 SDK originally, retargeted to 2025.3. Two internal-API usages (`AppLifecycleListener.appStarted`, delegating to the native invalidate action) produce verifier warnings — non-fatal, slated for cleanup.
+- Built against the PhpStorm 2023.3 SDK originally, later retargeted to newer platform lines. Two internal-API usages (`AppLifecycleListener.appStarted`, delegating to the native invalidate action) may produce verifier warnings depending on the target SDK — non-fatal, slated for cleanup.
 - The plugin uses only platform APIs; the code works in any IntelliJ-based IDE, though it's published for PhpStorm.
 
 ---

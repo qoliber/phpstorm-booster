@@ -3,7 +3,7 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.0.21"
+    id("org.jetbrains.kotlin.jvm") version "2.2.21"
     id("org.jetbrains.intellij.platform") version "2.6.0"
 }
 
@@ -19,9 +19,9 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        phpstorm(providers.gradleProperty("platformVersion").get())
+        phpstorm(providers.gradleProperty("platformVersion"), useInstaller = false)
+        bundledPlugin("com.jetbrains.php")
         testFramework(TestFrameworkType.Platform)
-        instrumentationTools()
         pluginVerifier()
     }
     testImplementation("junit:junit:4.13.2")
@@ -29,10 +29,9 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        freeCompilerArgs.add("-Xskip-metadata-version-check")
     }
 }
 
@@ -42,6 +41,8 @@ java {
 }
 
 intellijPlatform {
+    buildSearchableOptions = false
+
     pluginConfiguration {
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
