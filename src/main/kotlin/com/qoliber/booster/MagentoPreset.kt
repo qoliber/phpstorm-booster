@@ -9,5 +9,6 @@ object MagentoPreset {
         "pub/media",
         "setup",
         "node_modules",
+        "lib",
     )
 }

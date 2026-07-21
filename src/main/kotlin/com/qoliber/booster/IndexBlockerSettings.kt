@@ -19,6 +19,7 @@ class IndexBlockerSettings : PersistentStateComponent<IndexBlockerSettings.State
             "generated",
             "dev",
             "pub/static",
+            "lib",
             "Test*"
         )
         @JvmField var magentoFallbackEnabled: Boolean = true
