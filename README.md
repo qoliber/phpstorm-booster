@@ -4,7 +4,7 @@ A PhpStorm/IntelliJ plugin with tools for **better local development practices**
 
 > **Status: `0.1.0` — concept release.** Built to validate the idea on real projects. Expect rough edges; see [Caveats](#caveats).
 
-Compatible with **PhpStorm 2026.1.x** (build `261.*`).
+Compatible with **PhpStorm 2026.1.x – 2026.2.x** (builds `261.*`–`262.*`).
 
 ---
 

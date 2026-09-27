@@ -11,32 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      # JetBrains Runtime 21 matches the local toolchain and avoids the
-      # Kotlin-metadata issues seen with newer JDKs.
-      - name: Set up JBR 21
-        uses: actions/setup-java@v4
+      # build.gradle.kts uses jvmToolchain(25), matching the JBR 25 runtime
+      # that PhpStorm 2026.x ships with.
+      - name: Set up JBR 25
+        uses: actions/setup-java@v6
         with:
           distribution: jetbrains
-          java-version: "21"
+          java-version: "25"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
-      # The committed gradle.properties pins org.gradle.java.home /
-      # installations.paths to local machine paths for the maintainer's
-      # Java-25 host. Override them to the CI-provided JBR so the build is
-      # portable. (-D system properties take precedence over gradle.properties.)
       - name: Build plugin
-        run: >-
-          ./gradlew buildPlugin test
-          "-Dorg.gradle.java.home=$JAVA_HOME"
-          "-Dorg.gradle.java.installations.paths=$JAVA_HOME"
-          --stacktrace
+        run: ./gradlew buildPlugin test --stacktrace
+
+      # Checks binary compatibility against every IDE listed in
+      # pluginVerifierIdeVersions (gradle.properties).
+      - name: Verify plugin
+        run: ./gradlew verifyPlugin --stacktrace
 
       - name: Upload plugin zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phpstorm-booster-plugin
           path: build/distributions/*.zip
