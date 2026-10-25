@@ -13,8 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # build.gradle.kts uses jvmToolchain(25), matching the JBR 25 runtime
-      # that PhpStorm 2026.x ships with.
       - name: Set up JBR 25
         uses: actions/setup-java@v6
         with:
@@ -27,14 +25,12 @@ jobs:
       - name: Build plugin
         run: ./gradlew buildPlugin test --stacktrace
 
-      # Checks binary compatibility against every IDE listed in
-      # pluginVerifierIdeVersions (gradle.properties).
       - name: Verify plugin
         run: ./gradlew verifyPlugin --stacktrace
 
       - name: Upload plugin zip
         uses: actions/upload-artifact@v7
         with:
-          name: phpstorm-booster-plugin
           path: build/distributions/*.zip
+          archive: false
           if-no-files-found: error
