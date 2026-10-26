@@ -1,10 +1,11 @@
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.0.21"
-    id("org.jetbrains.intellij.platform") version "2.6.0"
+    id("org.jetbrains.kotlin.jvm") version "2.3.21"
+    id("org.jetbrains.intellij.platform") version "2.19.0"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -19,9 +20,11 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        phpstorm(providers.gradleProperty("platformVersion").get())
+        phpstorm(providers.gradleProperty("platformVersion")) {
+            useInstaller = false
+        }
+        bundledPlugin("com.jetbrains.php")
         testFramework(TestFrameworkType.Platform)
-        instrumentationTools()
         pluginVerifier()
     }
     testImplementation("junit:junit:4.13.2")
@@ -29,19 +32,17 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(21)
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        freeCompilerArgs.add("-Xskip-metadata-version-check")
-    }
+    jvmToolchain(25)
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 intellijPlatform {
+    buildSearchableOptions = false
+
     pluginConfiguration {
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
@@ -51,13 +52,22 @@ intellijPlatform {
 
     pluginVerification {
         freeArgs = listOf("-mute", "TemplateWordInPluginName")
+        failureLevel = listOf(VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS)
         ides {
-            ide(IntelliJPlatformType.PhpStorm, providers.gradleProperty("platformVersion").get())
+            providers.gradleProperty("pluginVerifierIdeVersions").get()
+                .split(',')
+                .map(String::trim)
+                .filter(String::isNotEmpty)
+                .forEach { create(IntelliJPlatformType.PhpStorm, it) }
         }
     }
 }
 
 tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+
     test {
         useJUnit()
     }

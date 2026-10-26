@@ -1,11 +1,9 @@
 package com.qoliber.booster
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.DirectoryIndexExcludePolicy
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer
 
 class IndexBlockerExcludePolicy(private val project: Project) : DirectoryIndexExcludePolicy {
 
@@ -37,9 +35,6 @@ class IndexBlockerExcludePolicy(private val project: Project) : DirectoryIndexEx
 
         return urls.toTypedArray()
     }
-
-    override fun getExcludeRootsForModule(rootModel: ModuleRootModel): Array<VirtualFilePointer> =
-        emptyArray()
 
     private fun collectMatches(
         dir: VirtualFile,
