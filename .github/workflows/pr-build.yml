@@ -1,10 +1,17 @@
-name: Build Plugin
+name: PR Build
 
+# Builds, tests and verifies the plugin for pull requests only. The zip is
+# uploaded as an artifact; pr-comment.yml then posts its download link on the PR.
 on:
-  push:
-    branches: ["**"]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,9 +29,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build plugin
+      - name: Build and test
         run: ./gradlew buildPlugin test --stacktrace
 
+      # Checks binary compatibility against every IDE listed in
+      # pluginVerifierIdeVersions (gradle.properties).
       - name: Verify plugin
         run: ./gradlew verifyPlugin --stacktrace
 
@@ -33,4 +42,5 @@ jobs:
         with:
           path: build/distributions/*.zip
           archive: false
+          retention-days: 14
           if-no-files-found: error

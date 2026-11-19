@@ -50,12 +50,12 @@ Visibility into and control over PhpStorm's cache/index storage.
 ## Install
 
 ### From a release zip
-1. Download `phpstorm-booster-<version>.zip` (from a [CI build artifact](#ci) or a release).
+1. Download `phpstorm-booster-<version>.zip` (from a [GitHub release](../../releases) or the download link on a pull request, see [CI & releases](#ci--releases)).
 2. PhpStorm → **Settings → Plugins** → ⚙ → **Install Plugin from Disk…** → pick the zip.
 3. Restart if prompted.
 
 ### Build from source
-Requires a JDK/JBR 21+.
+Requires a JDK/JBR 25.
 ```bash
 ./gradlew buildPlugin
 # → build/distributions/phpstorm-booster-<version>.zip
@@ -69,9 +69,10 @@ Other useful tasks:
 
 ---
 
-## CI
+## CI & releases
 
-Every push and pull request builds the plugin and uploads the zip as a workflow artifact — see [`.github/workflows/build.yml`](.github/workflows/build.yml). Download the artifact from the **Actions** tab of a completed run.
+- **Pull requests:** [`pr-build.yml`](.github/workflows/pr-build.yml) builds, tests and runs the plugin verifier on every PR to `main`. [`pr-comment.yml`](.github/workflows/pr-comment.yml) then posts a comment on the PR with a download link for the plugin zip and updates it on every new push. Pushes that aren't part of a PR don't trigger a build.
+- **Releases:** handled by [Release Please](https://github.com/googleapis/release-please) ([`release.yml`](.github/workflows/release.yml)). Use [Conventional Commit](https://www.conventionalcommits.org/) messages (`feat:`, `fix:`, …) on `main`. Release Please keeps a release PR open that bumps `pluginVersion` in `gradle.properties` and updates `CHANGELOG.md`. Merging that PR tags `vX.Y.Z`, creates the GitHub release and attaches the built plugin zip. Don't edit `pluginVersion` by hand.
 
 ---
 
