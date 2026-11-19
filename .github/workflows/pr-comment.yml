@@ -1,0 +1,79 @@
+name: PR Build Comment
+
+# Runs after "PR Build" in the context of the base repository, so it can comment
+# on pull requests from forks too (their own run only has a read-only token).
+# It never checks out or executes PR code.
+on:
+  workflow_run:
+    workflows: ["PR Build"]
+    types: [completed]
+
+permissions:
+  actions: read
+  pull-requests: write
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post or update download link
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const { owner, repo } = context.repo;
+            const marker = '<!-- phpstorm-booster-pr-build -->';
+
+            // Same-repo PRs are listed on the run; fork PRs have to be looked up.
+            let prNumber = run.pull_requests?.[0]?.number;
+            if (!prNumber) {
+              const { data: prs } = await github.rest.pulls.list({
+                owner, repo, state: 'open',
+                head: `${run.head_repository.owner.login}:${run.head_branch}`,
+              });
+              prNumber = prs.find(pr => pr.head.sha === run.head_sha)?.number;
+            }
+            if (!prNumber) {
+              core.info(`No open PR found for ${run.head_sha}; nothing to comment on.`);
+              return;
+            }
+
+            const sha = run.head_sha.slice(0, 7);
+            const runUrl = run.html_url;
+            let body;
+            if (run.conclusion === 'success') {
+              const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+                owner, repo, run_id: run.id,
+              });
+              const links = data.artifacts
+                .filter(a => !a.expired)
+                .map(a => `- [\`${a.name}\`](${context.serverUrl}/${owner}/${repo}/actions/runs/${run.id}/artifacts/${a.id})`)
+                .join('\n');
+              body = [
+                marker,
+                `### ✅ Plugin build for ${sha}`,
+                '',
+                links || '_No artifacts found._',
+                '',
+                'Install it in PhpStorm with **Settings → Plugins → ⚙ → Install Plugin from Disk…**.',
+                `Downloading requires being signed in to GitHub. The link expires after 14 days. [Workflow run](${runUrl})`,
+              ].join('\n');
+            } else {
+              body = [
+                marker,
+                `### ❌ Plugin build for ${sha}: ${run.conclusion}`,
+                '',
+                `No download is available. See the [workflow run](${runUrl}) for details.`,
+              ].join('\n');
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number: prNumber, per_page: 100,
+            });
+            const existing = comments.find(c => c.user?.type === 'Bot' && c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
+            }
